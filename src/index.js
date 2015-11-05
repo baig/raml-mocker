@@ -1,8 +1,13 @@
 'use strict';
+
+// importing raml-js-parser-2
+require('../vendor/raml-js-parser-2/src/bundle');
+
 var path = require('path'),
     fs = require('fs'),
     async = require('async'),
-    raml = require('raml-parser'),
+//    raml = require('raml-parser'),
+    RAML = global.RAML, // RAML 1.0 global object
     _ = require('lodash'),
     schemaMocker = require('./schema.js'),
     RequestMocker = require('./requestMocker.js');
@@ -62,14 +67,17 @@ function generateFromPath(filesPath, formats, callback) {
 function generateFromFiles(files, formats, callback) {
     var requestsToMock = [];
     async.each(files, function (file, cb) {
-        raml.loadFile(file).then(function (data) {
-            getRamlRequestsToMock(data, '/', formats, function (reqs) {
-                requestsToMock = _.union(requestsToMock, reqs);
-                cb();
-            });
-        }, function (error) {
-            cb('Error parsing: ' + error);
+        var data = RAML.toJSON( RAML.loadApi(file).getOrElse(null) );
+        //
+        //console.log(JSON.stringify(RAML.toJSON(api), null, 2));
+//        raml.loadFile(file).then(function (data) {
+        getRamlRequestsToMock(data, '/', formats, function (reqs) {
+            requestsToMock = _.union(requestsToMock, reqs);
+            cb();
         });
+//        }, function (error) {
+//            cb('Error parsing: ' + error);
+//        });
     }, function (err) {
         if (err) {
             console.log(err);
