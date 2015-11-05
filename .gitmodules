@@ -1,0 +1,3 @@
+[submodule "vendor/raml-js-parser-2"]
+	path = vendor/raml-js-parser-2
+	url = git@github.com:baig/raml-js-parser-2.git
