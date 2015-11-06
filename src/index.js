@@ -7,10 +7,12 @@ var path = require('path'),
     fs = require('fs'),
     async = require('async'),
 //    raml = require('raml-parser'),
-    RAML = global.RAML, // RAML 1.0 global object
+    ramlT = require('./ramlTransformations'),
     _ = require('lodash'),
     schemaMocker = require('./schema.js'),
     RequestMocker = require('./requestMocker.js');
+    
+var RAML = global.RAML; // RAML 1.0 global object
 
 function generate(options, callback) {
     var formats = {};
@@ -68,6 +70,10 @@ function generateFromFiles(files, formats, callback) {
     var requestsToMock = [];
     async.each(files, function (file, cb) {
         var data = RAML.toJSON( RAML.loadApi(file).getOrElse(null) );
+        data.resources = ramlT.resourceifyNested( ramlT.objectsHavingKeysWithSlash(data) )
+        ramlT.methodifyNested_(data.resources);
+        console.log(JSON.stringify(data))
+//        console.log(data)
         //
         //console.log(JSON.stringify(RAML.toJSON(api), null, 2));
 //        raml.loadFile(file).then(function (data) {
@@ -88,8 +94,10 @@ function generateFromFiles(files, formats, callback) {
 }
 
 function getRamlRequestsToMock(definition, uri, formats, callback) {
+    console.log(JSON.stringify(definition))
     var requestsToMock = [];
     if (definition.relativeUri) {
+//        console.log('definition.relativeUri')
         var nodeURI = definition.relativeUri;
         if (definition.uriParameters) {
             _.each(definition.uriParameters, function (uriParam, name) {
@@ -199,6 +207,12 @@ function getRamlRequestsToMockResources(definition, uri, formats, callback) {
         callback(requestsToMock);
     });
 }
+
+////////////////////////////////////////////////////////////////////////////////
+
+////////////////////////////////////////////////////////////////////////////////
+
+
 module.exports = {
     generate: generate
 };
