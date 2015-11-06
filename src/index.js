@@ -70,10 +70,10 @@ function generateFromFiles(files, formats, callback) {
     var requestsToMock = [];
     async.each(files, function (file, cb) {
         var data = RAML.toJSON( RAML.loadApi(file).getOrElse(null) );
+        data.schemas = ramlT.generateJsonSchemasFromRamlTypes(data.types)
         data.resources = ramlT.resourceifyNested( ramlT.objectsHavingKeysWithSlash(data) )
-        ramlT.methodifyNested_(data.resources);
-        console.log(JSON.stringify(data))
-//        console.log(data)
+        ramlT.methodifyNested_(data.resources, data.schemas);
+//        console.log(JSON.stringify(data))
         //
         //console.log(JSON.stringify(RAML.toJSON(api), null, 2));
 //        raml.loadFile(file).then(function (data) {
@@ -94,7 +94,7 @@ function generateFromFiles(files, formats, callback) {
 }
 
 function getRamlRequestsToMock(definition, uri, formats, callback) {
-    console.log(JSON.stringify(definition))
+//    console.log(JSON.stringify(definition))
     var requestsToMock = [];
     if (definition.relativeUri) {
 //        console.log('definition.relativeUri')
