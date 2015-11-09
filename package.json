@@ -8,7 +8,7 @@
         "src": "src"
     },
     "scripts": {
-        "test": "node test/ramlTest.js"
+        "postinstall": "echo -n \"INSTALLING dependencies for raml-js-parser-2\" && npm install vendor/raml-js-parser-2"
     },
     "repository": {
         "type": "git",
