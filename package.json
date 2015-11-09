@@ -9,7 +9,7 @@
     },
     "scripts": {
         "test": "node test/ramlTest.js",
-        "postinstall": "echo \"INSTALLING dependencies for raml-js-parser-2\" && npm install vendor/raml-js-parser-2"
+        "postinstall": "echo \"INSTALLING dependencies for raml-js-parser-2\" && cd vendor/raml-js-parser-2 && npm install && cd ../../"
     },
     "repository": {
         "type": "git",
